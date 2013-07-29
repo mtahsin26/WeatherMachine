@@ -1,0 +1,610 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1" baseProfile="full" width="100%" height="100%">
+	
+	<style type="text/css">
+	<![CDATA[
+		#headline{
+			fill: white;
+			font-family: helvetica, sans-serif;
+			font-size: 36pt;
+			font-weight: bold;
+			
+		}
+		
+		.menuLabel{
+			font-family: verdana, sans-serif;
+			font-size: 16pt;
+			font-weight: bold;
+		
+		}
+		
+		.buttonLabel{
+			fill: white;
+			font-size: 12pt;
+			font-family: helvetica, sans-serif;
+			
+		}
+		
+		.rolloverButton{
+			opacity: 0.2;
+			fill: black;
+			cursor: pointer;
+		}
+		
+		
+		
+	]]>
+	</style>
+	
+	<script type="text/javascript">
+	 <![CDATA[
+	 
+		//Namespaces
+		var svgns="http://www.w3.org/2000/svg";
+		var xlinkns="http://www.w3.org/1999/xlink";
+		
+		
+		var rainStarted = false; //Set variable to see if we created the rain objects for the first time
+		var rainDisplay = true; //Assign the visibility of the rain to be true
+		
+		function createRain(){
+			if(rainStarted == false){ //If the rain was not created yet, dynamically create the rain objects
+				for(i=0; i<25; i++){ //This for loop create "25" rain drops. The number of rain drops created can be changed
+					
+					//The raindrop will be a rectangle object
+					var rainDrop = document.createElementNS(svgns,'rect');
+				
+					//Use Math.random values to assign unique values for each raindrop so that it actually looks like its raining
+					//because there's no such thing as synchronized rain
+					var startPoint = Math.ceil(Math.random()*200)+500+'px'; //Add a random startpoint for the raindrop
+					rainDrop.setAttributeNS(null,'y',startPoint); //Set its Y position to the startpoint when we first create it. which is going to be on the bottom
+					rainDrop.setAttributeNS(null,'x',Math.ceil(Math.random()*700)+250+'px');
+					rainDrop.setAttributeNS(null,'fill','#5CA2DB'); //Set the rain drop color
+					rainDrop.setAttributeNS(null,'height','20px'); //Set the raindrop height
+					rainDrop.setAttributeNS(null,'width','5px'); //Set the width of the raindrop
+					rainDrop.setAttributeNS(null,'opacity','0.7'); //Set the opacity
+					
+
+					//Now for each raindrop, we have to animate it so that it looks like it is raining.
+					//We do this by animating the rainDrop's Y attribute and move it.
+					var newAni=document.createElementNS(svgns,'animate');
+
+					newAni.setAttributeNS(null,'attributeName','y'); //The attribute we are animating
+					newAni.setAttributeNS(null,'repeatCount','indefinite'); //Keep the animation on repeat
+					newAni.setAttributeNS(null,'dur',Math.ceil(Math.random()*3)+1+'s'); //Set a random number to animate the rain 
+					newAni.setAttributeNS(null,'from',Math.ceil(Math.random()*-100)+1+'px'); //Set a negative random number so that the rain starts from the top
+					newAni.setAttributeNS(null,'to',startPoint); //Animate it to the bottom which was our initial start point
+					newAni.setAttributeNS(null, 'onrepeat', 'changeRainX(this)'); //When repeating the animation call this function so that it changes the rain drop's X position
+
+					rainDrop.appendChild(newAni);
+					document.getElementById('rain').appendChild(rainDrop);
+					
+					//Call the method to start the animation for this particular rain drop that was just appended
+					var l = document.getElementById('rain').getElementsByTagName('animate').length;
+					document.getElementById('rain').getElementsByTagName('animate')[l-1].beginElement();
+				}
+				
+				rainStarted = true; //Now the rain has been created. Set to true
+			
+			}else{  //If the rain has been created, we can now just toggle it on and off with it's display
+				
+				if(rainDisplay){ //If the rain is displaying, change display to none
+					document.getElementById('rain').setAttribute('display', 'none');
+					rainDisplay = false;
+				}else{ //If the rain is not displaying, change the display to block
+					document.getElementById('rain').setAttribute('display', 'block');
+					rainDisplay = true;
+				}
+				
+			}
+
+		}
+		
+		//Function that gets called for the rain's onrepeat to change the X position and its animation TO position to create dynamic-ness
+		function changeRainX(which){
+			var startPoint = Math.ceil(Math.random()*200)+500+'px';
+			which.parentNode.setAttributeNS(null, 'x', Math.ceil(Math.random()*700)+250+'px');
+			which.parentNode.setAttributeNS(null, 'y', startPoint);
+			which.setAttributeNS(null, 'to', startPoint);
+		}
+		
+		
+		
+		//Similar method of how we created the rain but this time we create a circle object 
+		var snowStarted = false; //Check if we first created and started the snow
+		var snowDisplay = true; //Check to see if the snow is displaying
+		
+		function createSnow(){
+			if(snowStarted == false){ //If we didn't create the snow, begin to create it and set its attributes and animation
+				for(i=0; i<15; i++){
+				//<circle cx="0px" cy="0px" r="15px" fill="red" id="moveMe"/>
+					var snow=document.createElementNS(svgns,'circle');
+					
+					var startPoint = Math.ceil(Math.random()*200)+500+'px';
+					
+					snow.setAttributeNS(null,'cy','0px');
+					snow.setAttributeNS(null,'cx',Math.ceil(Math.random()*700)+250+'px');
+					snow.setAttributeNS(null,'r','5px');
+					snow.setAttributeNS(null,'fill','white');
+					snow.setAttributeNS(null,'stroke','black');
+					snow.setAttributeNS(null,'stroke-width','2px');
+					snow.setAttributeNS(null,'opacity','.5');
+					
+					var newAni=document.createElementNS(svgns,'animate');
+
+					newAni.setAttributeNS(null,'attributeName','cy');
+					newAni.setAttributeNS(null,'id', 'startSnow');
+							
+					newAni.setAttributeNS(null,'repeatCount','indefinite');
+					newAni.setAttributeNS(null,'dur',Math.ceil(Math.random()*3)+1+'s');
+					newAni.setAttributeNS(null,'from',Math.ceil(Math.random()*-100)+1+'px');
+					newAni.setAttributeNS(null,'to',startPoint);
+					newAni.setAttributeNS(null, 'onrepeat', 'changeSnowX(this)');
+					
+					
+					//Mouseover animation that turns the snow into a small piece and grows again
+					var newAni2 = document.createElementNS(svgns,'animate');
+					newAni2.setAttributeNS(null,'attributeName','r');
+					newAni2.setAttributeNS(null,'fill','freeze');
+					newAni2.setAttributeNS(null,'dur','2s');
+					newAni2.setAttributeNS(null,'from','5px');
+					newAni2.setAttributeNS(null,'to','50px');
+					newAni2.setAttributeNS(null,'begin','mouseover');
+							
+
+					snow.appendChild(newAni);
+					snow.appendChild(newAni2);
+					document.getElementById('snow').appendChild(snow);
+					
+					//Start the animation for the snow object
+					var l = document.getElementById('snow').getElementsByTagName('animate').length;
+					document.getElementById('snow').getElementsByTagName('animate')[l-1].beginElement();
+				}
+				snowStarted = true; //Now we have created the snow
+				
+			}else{ //If the snow is already created, just toggle its display to turn the snow on/off
+				if(snowDisplay){
+					document.getElementById('snow').setAttribute('display', 'none');
+					snowDisplay = false;
+				}else{
+					document.getElementById('snow').setAttribute('display', 'block');
+					snowDisplay = true;
+				}
+			
+			}
+		}
+		
+		//Function that gets called for the snow's onrepeat to change the X position and its animation TO position to create dynamic-ness
+		function changeSnowX(which){
+			var startPoint = Math.ceil(Math.random()*200)+500+'px';
+			which.parentNode.setAttributeNS(null, 'cx', Math.ceil(Math.random()*700)+250+'px');
+			which.parentNode.setAttributeNS(null, 'cy', startPoint);
+			which.setAttributeNS(null, 'to', startPoint);
+		}
+		
+		
+		//Skew the rain to the direction we want
+		var skew = 1; //set initial skew value
+		
+		//function to change the direction of the rain
+		function skewRain(direction){
+			if(rainDisplay){ //if the rain is being displayed, then we can skew it
+			
+				//first check if there are any rain objects that exists
+				if(document.getElementById('rain').getElementsByTagName('rect')){
+				
+					//Next get all the rain objects
+					rain = document.getElementById('rain').getElementsByTagName('rect');
+					
+					//If the function parameter was left, transform the skew by substracting to the skew value
+					if(direction == 'left'){
+						if(skew>-60){
+						skew = skew-5;
+						}
+						
+						//iterate through all the rain objects and change their skew value
+						for(i=0; i<rain.length; i++ ){
+							rain[i].setAttribute('transform','skewX('+skew+')');
+						}
+						
+					}else if(direction == 'right'){ //If the function parameter was right, transform the skew by adding to the skew value
+						if(skew<60){
+						skew = skew+5;
+						}
+						
+						//iterate through all the rain objects and change their skew value
+						for(i=0; i<rain.length; i++){
+							rain[i].setAttribute('transform','skewX('+skew+')');
+						}
+					}
+				}
+			}
+		}
+		
+		//Toggle the display of the sun object
+		function showSun(){
+			sun = document.getElementById('sun');
+			
+			if(sun.getAttribute('display') == 'none'){
+				sun.setAttribute('display', 'block');
+			}else if(sun.getAttribute('display') == 'block'){
+				sun.setAttribute('display', 'none');
+			}
+		}
+		
+		//Toggle the display of the white cloud
+		function showWhiteCloud(){
+			cloud = document.getElementById('whiteCloud');
+			
+			if(cloud.getAttribute('display') == 'none'){
+				cloud.setAttribute('display', 'block');
+			}else if(cloud.getAttribute('display') == 'block'){
+				cloud.setAttribute('display', 'none');
+			}
+		}
+		
+		////Toggle the display of the dark cloud
+		function showDarkCloud(){
+			cloud = document.getElementById('darkCloud');
+			
+			if(cloud.getAttribute('display') == 'none'){
+				cloud.setAttribute('display', 'block');
+			}else if(cloud.getAttribute('display') == 'block'){
+				cloud.setAttribute('display', 'none');
+			}
+		}
+		
+		//Create a building object when the Add building button is pressed and add it to our canvas/stage
+		function createBuilding(){
+		
+			newBuild = document.createElementNS(svgns,'rect');
+			newAni = document.createElementNS(svgns,'animate');
+			
+			newBuild.setAttributeNS(null,'x',Math.ceil(Math.random()*700)+225+'px');
+			newBuild.setAttributeNS(null,'y','350px');
+			newBuild.setAttributeNS(null,'width','75px');
+			newBuild.setAttributeNS(null,'height','200px');
+			newBuild.setAttributeNS(null,'stroke','black');
+			newBuild.setAttributeNS(null,'stroke-width','2px');
+			newBuild.setAttributeNS(null,'fill','url(#brickPattern)');
+			
+			
+			document.getElementById('building').appendChild(newBuild);
+		}
+		
+		
+	 ]]>
+	 </script>
+	 
+	 <!-- Defined objects to reuse
+	-->
+	 <defs>
+
+		<!--
+			Use these predefined paths that we use to animate the clouds and the sun
+		-->
+		<path  d="M440,27c14.431-4.557,36,10,35,30s-26,22-35,22s-30-10-24-26 S421,33,440,27z" id="sunPath"/>
+		<path id="whiteCloudPath" d="M123,60c0,0,188,8,277,0s120-11.444,145,1.778S617,67,397,69 S-66,68,123,60z"/>
+		<path id="darkCloudPath" d="M87,0c56,7,22,126,90,117S177,7,220,0s104,19.057,116,58.528 s42,97.442,93,58.957S393,29,451,36s117,15,63,50s-63-22-126-40s-50,86.264-128,84.132S245,55,174,48s-65,85-100,78S31-7,87,0z"/>
+		
+		<!--
+			Create a rectangle brick to be used as a pattern fill
+		-->
+		<rect id="brick" width="50px" height="20px" fill="#B57A36" stroke="black" stroke-width="2px"/>
+		
+		<!--
+			Use the brick we created to make a pattern
+		-->
+		<pattern id="brickPattern" height="10" width="30" patternUnits="userSpaceOnUse" overflow="visible">
+            <use xlink:href="#brick"/>
+        </pattern>
+		
+		<!--
+			Define our white cloud object and set its motion path
+		-->
+		<g id="whiteCloud" display="none" transform="scale(1.5)">
+			<circle cx="0" cy="20" r="20px" fill="white"/>
+			<circle cx="20px" cy="10" r="20px" fill="white"/>
+			<circle cx="70px" cy="20" r="20px" fill="white"/>
+			<circle cx="50px" cy="0" r="20px" fill="white"/>
+			<circle cx="30px" cy="15" r="20px" fill="white"/>
+			<circle cx="50px" cy="20" r="20px" fill="white"/>
+			<animateMotion dur="12s" repeatCount="indefinite">
+					<mpath xlink:href="#whiteCloudPath"/>
+			</animateMotion>
+		</g>
+		
+		<!--
+			Define our dark cloud object and set it's motion path
+		-->
+		<g id="darkCloud" display="none" transform="scale(1.5)">
+			<circle cx="0" cy="20" r="20px" fill="#616363"/>
+			<circle cx="20px" cy="10" r="20px" fill="#616363"/>
+			<circle cx="70px" cy="20" r="20px" fill="#616363"/>
+			<circle cx="50px" cy="0" r="20px" fill="#616363"/>
+			<circle cx="30px" cy="15" r="20px" fill="#616363"/>
+			<circle cx="50px" cy="20" r="20px" fill="#616363"/>
+			<animateMotion dur="24s" repeatCount="indefinite">
+					<mpath xlink:href="#darkCloudPath"/>
+			</animateMotion>
+		</g>
+	
+			
+  </defs>
+<!--
+				End of our defined objects
+-->
+	 
+	 <!--
+			 EVERYTHING BELOW FROM HERE IS DISPLAYED ON THE STAGE
+		-->
+	 
+	 
+	 
+	 <!--
+			Set our background
+		-->
+	<rect width="100%" height="100%" fill="#5C7F9C" id="background"/>
+		
+	<!--
+			The main content which is used as the stage for our RIT weather machine
+		-->
+	 <g id="content" transform="translate(50,0)">
+			
+			<!--
+				Our background for our stage. It animates its fill color to change from day to night and vice versa
+		-->
+			<rect id="stage" x="210" y="100px" width="800px" height="600px" fill="#B2D5EA">
+				<animate attributeName="fill" from="#B2D5EA" to="#0D0C24" dur="3.5s" fill="freeze" begin="Dark.click"/> 
+				<animate attributeName="fill" from="#0D0C24" to="#B2D5EA" dur="3.5s" fill="freeze" begin="Light.click"/> 
+			</rect>
+			
+			<!--
+			Begin animation of opacity when the page first loads
+		-->
+			<animate attributeName="opacity" from="0" to="1" dur="0.5s" fill="freeze"/> 
+	 
+	 
+		<!--
+			Set the bottom "grass" for our stage
+		-->
+		 <rect x="210px" y="550px" fill="green" width="800px" height="200px"/>
+		 
+		 <!--
+			Container to hold our Sun object
+		-->
+		 <g id="sun"  display="block">
+			<circle cx="300" cy="120" r="40px" fill="#FAEB43"/>
+				<animateMotion dur="8s" repeatCount="indefinite">
+					<mpath xlink:href="#sunPath"/>
+				</animateMotion>
+		 </g>
+		 
+		 <!--
+			Container to hold our defined cloud objects
+		-->
+		 <g id="clouds">
+			<use x="80" y="100" xlink:href="#darkCloud"/>
+			<use x="90" y="75" xlink:href="#whiteCloud"/>
+		 </g>
+		 
+		 <!--
+			COntainer to hold our dynamically created Buildings
+		-->
+		 <g id="building">
+		 </g>
+		 
+		 <!--
+			Container to hold our dynamically created snow
+		-->
+		 <g id="snow">
+		 </g>
+		 
+		 <!--
+			Container to hold our dynamically created rain
+		-->
+		 <g id="rain">
+		 </g>
+		 
+		 <!--
+			Container for our top banner
+		-->
+		 <g id="banner">
+		 
+				<!--
+					Set the banner pattern
+				-->
+				<rect x="210px" y="0px" fill="url(#brickPattern)" width="800px" height="100"/>
+				<rect x="210px" y="0px" fill="black" width="800px" height="100" opacity="0.5"/>
+				
+				<!--
+					Title of our banner
+				-->
+				<text id="headline" x="300px" y="75px">
+					RIT Weather Machine
+				</text>
+				
+				<!--
+					Animate this when the page loads
+				-->
+				<animate attributeName="opacity" from="0" to="1" dur="3s" fill="freeze"/> 
+		 </g>
+	 </g>
+	 
+	 
+	<!--
+				Container that holds our buttons for the Rain/Snow setting buttons
+	--> 	
+	<g id="toggleRain">
+		<text x="10px" y="50px" class="menuLabel">
+			Rain/Snow Settings
+		</text>
+		
+		<!--
+			Toggle Rain button
+		-->
+		<g id="rainButton" y="100px">
+		<text x="20px" y="90px" class="buttonLabel">Toggle Rain
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s" begin="rainButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="rainButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect x="10px" y="60px" width="200px" height="50px" onclick="createRain()" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="rainButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="rainButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+		
+		<!--
+			Toggle Snow button
+		-->
+		<g id="snowButton" y="100px">
+		<text x="20px" y="150px" class="buttonLabel">Toggle Snow
+			<animate attributeName="x" from="20px" to="40px" dur="0.3s" begin="snowButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate  attributeName="x" to="20px" from="40px" dur="0.3s" begin="snowButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect x="10px" y="120px" width="200px" height="50px" onclick="createSnow()" class="rolloverButton">
+			<animate  attributeName="x" from="10px" to="40px" dur="0.3s" begin="snowButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate  attributeName="x" to="10px" from="40px" dur="0.3s" begin="snowButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+		<!--
+			Skew Rain left button
+		-->
+		<g id="skewLeft">
+		<text x="20px" y="210px" class="buttonLabel">Skew Rain Left
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s" begin="skewLeft.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="skewLeft.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect  x="10px" y="180px" width="200px" height="50px" onclick="skewRain('left')" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="skewLeft.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="skewLeft.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+
+		
+		<!--
+			Skew rain right button
+		-->
+		<g id="skewRight">
+		<text x="20px" y="270px" class="buttonLabel">Skew Rain Right
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s" begin="skewRight.mouseover" repeat=		"whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="skewRight.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect  x="10px" y="240px" width="200px" height="50px" onclick="skewRain('right')" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="skewRight.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="skewRight.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+	</g>
+	
+
+	
+	
+	<!--
+				Container to hold our set of buttons for the 
+	-->
+	<g id="toggleScene" transform="translate(0,290)">
+		<text x="10px" y="50px" class="menuLabel">
+			Scene Settings
+		</text>
+		
+		<!--
+			Button to toggle the Sun
+		-->
+		<g id="sunButton" y="100px">
+		<text x="20px" y="90px" class="buttonLabel">Toggle Sun
+			<animate attributeName="x" from="20px" to="40px" dur="0.3s" begin="sunButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate  attributeName="x" to="20px" from="40px" dur="0.3s" begin="sunButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect x="10px" y="60px" width="200px" height="50px" onclick="showSun()" class="rolloverButton">
+			<animate  attributeName="x" from="10px" to="40px" dur="0.3s" begin="sunButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate  attributeName="x" to="10px" from="40px" dur="0.3s" begin="sunButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+		<!--
+			Button to change the scene to night time
+		-->
+		<g id="Dark">
+		<text x="20px" y="150px" class="buttonLabel">Change to Nighttime
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s" begin="Dark.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="Dark.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect  x="10px" y="120px" width="200px" height="50px" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="Dark.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="Dark.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+		<!--
+			Button to change the scene to daytime
+		-->
+		<g id="Light">
+		<text x="20px" y="210px" class="buttonLabel">Change to Daytime
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s" begin="Light.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="Light.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect  x="10px" y="180px" width="200px" height="50px" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="Light.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="Light.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+	</g>
+	
+	<!--
+			Container to hold our set of buttons for the Extra functionality
+		-->
+	<g id="toggleScene2" transform="translate(1100,0)">
+		<text x="10px" y="50px" class="menuLabel">
+			Extra Settings
+		</text>
+		
+		<!--
+			Button to toggle the display of the white cloud
+		-->
+		<g id="toggleWhiteCloud" y="100px">
+		<text x="20px" y="90px" class="buttonLabel">Toggle White Cloud
+			<animate attributeName="x" from="20px" to="40px" dur="0.3s" begin="toggleWhiteCloud.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate  attributeName="x" to="20px" from="40px" dur="0.3s" begin="toggleWhiteCloud.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect x="10px" y="60px" width="200px" height="50px" onclick="showWhiteCloud()" class="rolloverButton">
+			<animate  attributeName="x" from="10px" to="40px" dur="0.3s" begin="toggleWhiteCloud.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate  attributeName="x" to="10px" from="40px" dur="0.3s" begin="toggleWhiteCloud.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+		<!--
+			Button to toggle the display of the dark cloud
+		-->
+		<g id="toggleDarkCloud">
+		<text x="20px" y="150px" class="buttonLabel">Toggle Dark Cloud
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s"  begin="toggleDarkCloud.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="toggleDarkCloud.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect  x="10px" y="120px" width="200px" height="50px" onclick="showDarkCloud()" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="toggleDarkCloud.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="toggleDarkCloud.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+		
+		<!--
+			Button to dynamically create an RIT building made our of "bricks"
+		-->
+		<g id="buildButton">
+		<text x="20px" y="210px" class="buttonLabel">Add a building
+			<animate class="animateBtn" attributeName="x" from="20px" to="40px" dur="0.3s" begin="buildButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="20px" from="40px" dur="0.3s" begin="buildButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</text>
+		<rect  x="10px" y="180px" width="200px" onclick="createBuilding()" height="50px" class="rolloverButton">
+			<animate class="animateBtn" attributeName="x" from="10px" to="40px" dur="0.3s" begin="buildButton.mouseover" repeat="whenNotActive" fill="freeze"/>
+			<animate class="animateBtn" attributeName="x" to="10px" from="40px" dur="0.3s" begin="buildButton.mouseout" repeat="whenNotActive" fill="freeze"/>
+		</rect>
+		</g>
+	</g>
+	
+</svg>
